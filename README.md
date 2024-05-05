@@ -123,4 +123,4 @@ func main() {
 
 ## Documentation
 
-Find the full documentation of the package here: https://pkg.go.dev/goDOM
+Find the full documentation of the package here: https://pkg.go.dev/github.com/richi0/goDOM
