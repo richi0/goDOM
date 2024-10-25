@@ -1,4 +1,4 @@
-# goDOM [![GoDoc](https://pkg.go.dev/badge/goDOM.svg)](https://pkg.go.dev/goDOM)
+# goDOM [![GoDoc](https://pkg.go.dev/badge/goDOM.svg)](https://pkg.go.dev/github.com/richi0/goDOM)
 
 goDOM parses HTML documents and makes data extraction easy.
 
@@ -13,7 +13,7 @@ After parsing a document many of the well known DOM methods can be used to find 
 ### Install
 
 ```
-go get -u github.com/...
+go get -u github.com/richi0/goDOM
 ```
 
 ### Example 1
