@@ -201,7 +201,17 @@ func (d *DOM) HasAttributes() bool {
 	return len(d.Attributes()) > 0
 }
 
+// SetAttribute sets the value of an attribute on the specified element.
+// If the attribute already exists, the value is updated; otherwise a new attribute is added
+// with the specified name and value.
+//
+// See Javascript equivalent: https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute
+func (d *DOM) SetAttribute(key, value string) {
+	d.node.Attr = append(d.node.Attr, html.Attribute{Key: key, Val: value})
+}
+
 // Render returns a string representation of the DOM.
+// This method is not part of the Javascript Document interface.
 func (d *DOM) Render() (string, error) {
 	var buffer bytes.Buffer
 	err := html.Render(&buffer, d.node)
@@ -283,6 +293,48 @@ func (d *DOM) Text(full bool) string {
 // See Javascript equivalent: https://developer.mozilla.org/en-US/docs/Web/API/Node/parentNode
 func (d *DOM) Parent() *DOM {
 	return newDOM(d.node.Parent)
+}
+
+const (
+	MatchTypeExact    = iota
+	MatchTypeContains = iota
+)
+
+// GetElemenstByTextContent returns a slice of elements with the given text content.
+// The matchType parameter can be set to MatchTypeExact (0) or MatchTypeContains (1).
+// If matchType is set to MatchTypeExact, the text content of the element must match the given text exactly.
+// If matchType is set to MatchTypeContains, the text content of the element must contain the given text.
+// The default matchType is MatchTypeExact.
+// This method is not part of the Javascript Document interface.
+func (d *DOM) GetElementsByTextContent(text string, matchType int) []*DOM {
+	elements := make([]*DOM, 0)
+	nodes := d.getFlatElementList(true)
+	for _, node := range nodes {
+		if matchType == MatchTypeContains {
+			if strings.Contains(node.Text(false), text) {
+				elements = append(elements, node)
+			}
+		} else if node.Text(false) == text {
+			elements = append(elements, node)
+		}
+	}
+	return elements
+}
+
+// RemoveStyleAttributes removes all attributes that can be used to style an element.
+// This method is not part of the Javascript Document interface.
+func (d *DOM) RemoveStyleAttributes() {
+	nodes := d.getFlatElementList(true)
+	cleanAttributes := make([]html.Attribute, 0)
+	for _, node := range nodes {
+		attributes := node.node.Attr
+		for _, key := range attributes {
+			if slices.Contains(acceptedAttributes, key.Key) {
+				cleanAttributes = append(cleanAttributes, key)
+			}
+		}
+		node.node.Attr = cleanAttributes
+	}
 }
 
 // getTextNodes returns all text node children of the given node.

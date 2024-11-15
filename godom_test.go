@@ -261,3 +261,36 @@ func TestText(t *testing.T) {
 		t.Errorf("Expected text to be %s but go %s", expected, text)
 	}
 }
+
+func TestGetElementsByTextContect(t *testing.T) {
+	dom := createTestDOM()
+	elements := dom.GetElementsByTextContent("abc", 0)
+	if len(elements) != 0 {
+		t.Error("Expected no elements but found", len(elements))
+	}
+	elements = dom.GetElementsByTextContent("Enumerated types", 0)
+	if len(elements) != 2 {
+		t.Error("Expected 2 elements but found", len(elements))
+	}
+	elements = dom.GetElementsByTextContent("other packages are accessible", 0)
+	if len(elements) != 0 {
+		t.Error("Expected 0 elements but found", len(elements))
+	}
+	elements = dom.GetElementsByTextContent("other packages are accessible", 1)
+	if len(elements) != 1 {
+		t.Error("Expected 1 elements but found", len(elements))
+	}
+}
+
+func TestRemoveStyleAttributes(t *testing.T) {
+	dom := createTestDOM()
+	element := dom.GetElementById("cite_ref-94")
+	element.RemoveStyleAttributes()
+	if element.Attributes()["id"] != "" {
+		t.Error("Expected style attribute to be removed")
+	}
+	child := element.FirstElementChild()
+	if child.Attributes()["href"] == "" {
+		t.Error("Expected href attribute not be removed")
+	}
+}
